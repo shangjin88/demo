@@ -17,24 +17,30 @@ type Server struct {
 	TLS      *tls.Config
 }
 
-type Option func(*Server)
+const (
+	defaultProtocol = "tcp"
+	defaultTimeout  = 10 * time.Second
+	defaultMaxConns = 1000
+)
 
-func Protocol(p string) Option {
+type option func(*Server)
+
+func Protocol(p string) option {
 	return func(s *Server) {
 		s.Protocol = p
 	}
 }
-func Timeout(timeout time.Duration) Option {
+func Timeout(timeout time.Duration) option {
 	return func(s *Server) {
 		s.Timeout = timeout
 	}
 }
-func MaxConns(maxconns int) Option {
+func MaxConns(maxconns int) option {
 	return func(s *Server) {
 		s.MaxConns = maxconns
 	}
 }
-func TLS(tls *tls.Config) Option {
+func TLS(tls *tls.Config) option {
 	return func(s *Server) {
 		s.TLS = tls
 	}
@@ -44,9 +50,9 @@ func NewServer(addr string, port int, options ...func(server *Server)) (*Server,
 	srv := Server{
 		Addr:     addr,
 		Port:     port,
-		Protocol: "tcp",
-		Timeout:  30 * time.Second,
-		MaxConns: 1000,
+		Protocol: defaultProtocol,
+		Timeout:  defaultTimeout,
+		MaxConns: defaultMaxConns,
 		TLS:      nil,
 	}
 
