@@ -8,15 +8,14 @@ import (
 
 func TestSliceToString(t *testing.T) {
 
-	var a = []int{1,2,3,4}
+	var a = []int{1, 2, 3, 4}
 	b, err := json.Marshal(a)
 	if err != nil {
 		panic(err)
 	}
 	var result = string(b)
-	fmt.Println(result[])
+	fmt.Println(result)
 }
-
 
 func SliceToString(s []string) string {
 	var str string
