@@ -9,3 +9,6 @@ for ip in ${ip_array[@]}; do
     echo "$ip"
 done
 
+
+
+
