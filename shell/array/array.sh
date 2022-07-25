@@ -9,6 +9,10 @@ for ip in ${ip_array[@]}; do
     echo "$ip"
 done
 
+# 遍历数组
+for ip in $ips; do
+    echo "$ip"
+done
 
 
 

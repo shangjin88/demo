@@ -15,6 +15,18 @@ type Server struct {
 	Timeout  time.Duration
 	MaxConns int
 	TLS      *tls.Config
+	Labels   []Label
+	SSH
+}
+
+type Label struct {
+	key   string
+	value string
+}
+
+type SSH struct {
+	User     string
+	Password string
 }
 
 const (
@@ -23,30 +35,58 @@ const (
 	defaultMaxConns = 1000
 )
 
-type option func(*Server)
+const (
+	defaultUser     = "root"
+	defaultPassword = "123456"
+)
 
-func Protocol(p string) option {
+var defaultSSH = SSH{
+	User:     defaultUser,
+	Password: defaultPassword,
+}
+
+var serverSyncLabel = Label{
+	key:   "sync",
+	value: "",
+}
+
+var serverTypeLabel = Label{
+	key:   "type",
+	value: "worker",
+}
+
+func getDefaultLabels() []Label {
+	var labels []Label
+
+	labels = append(labels, serverTypeLabel, serverSyncLabel)
+
+	return labels
+}
+
+type ServerOption func(*Server)
+
+func Protocol(p string) ServerOption {
 	return func(s *Server) {
 		s.Protocol = p
 	}
 }
-func Timeout(timeout time.Duration) option {
+func Timeout(timeout time.Duration) ServerOption {
 	return func(s *Server) {
 		s.Timeout = timeout
 	}
 }
-func MaxConns(maxconns int) option {
+func MaxConns(maxconns int) ServerOption {
 	return func(s *Server) {
 		s.MaxConns = maxconns
 	}
 }
-func TLS(tls *tls.Config) option {
+func TLS(tls *tls.Config) ServerOption {
 	return func(s *Server) {
 		s.TLS = tls
 	}
 }
 
-func NewServer(addr string, port int, options ...func(server *Server)) (*Server, error) {
+func NewServer(addr string, port int, options ...func(*Server)) (*Server, error) {
 	srv := Server{
 		Addr:     addr,
 		Port:     port,
@@ -54,6 +94,8 @@ func NewServer(addr string, port int, options ...func(server *Server)) (*Server,
 		Timeout:  defaultTimeout,
 		MaxConns: defaultMaxConns,
 		TLS:      nil,
+		Labels:   getDefaultLabels(),
+		SSH:      defaultSSH,
 	}
 
 	for _, option := range options {

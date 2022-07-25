@@ -3,6 +3,7 @@ package slice
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -27,4 +28,30 @@ func SliceToString(s []string) string {
 		return str[1:]
 	}
 	return ""
+}
+
+func TestSlice(t *testing.T) {
+	leader := "10.16.1.11"
+	backupEndpointsString := "10.16.1.11,10.16.1.14"
+
+	backupEndpoints := strings.Split(backupEndpointsString, ",")
+
+	for _, endpoint := range backupEndpoints {
+		if endpoint != leader {
+			fmt.Println(endpoint)
+		}
+	}
+}
+
+func TestGetSlice(t *testing.T) {
+	slice := []string{"a", "b", "b"}
+	fmt.Println(slice[:3]) //[a b c d]
+	fmt.Println(len(slice))
+
+	if len(slice) > 2 {
+		fmt.Println(slice[:2])
+	}
+	fmt.Println(slice)
+	slice = slice[:2]
+	fmt.Println(slice)
 }
